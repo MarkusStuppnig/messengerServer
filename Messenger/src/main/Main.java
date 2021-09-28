@@ -21,7 +21,7 @@ import distributor.Distributor;
 public class Main {
 
 	//Version
-	public static double version = 0.35;
+	public static final double version = 0.37;
 	
     //Listener Port for Login(Standard: 4200)
     public static final int loginPort = 4200;
@@ -50,6 +50,9 @@ public class Main {
     
     public static void shutdown() {
     	
+    	//Shutdown
+    	System.out.println("Server Shutdown");
+    	
     	//Closing Threads
     	mainScanner.interrupt();
     	
@@ -58,12 +61,11 @@ public class Main {
     		Main.clients.get(0).removeClient();
 		}
 		
-    	System.out.println("Server Shutdown");
 		System.exit(0);
     }
     
     //Get Free Port
-    public static int useFreePort() {
+    public static int getFreePort() {
     	
     	//Put All Used Ports in portsInUse
         List<Integer> portsInUse = new ArrayList<>();
@@ -96,7 +98,6 @@ public class Main {
         return null;
     }
     
-    //Fehler: Muss noch rausgefunden werden!!!
     public static void releaseOldConnections() {
     	
     	//Send All Clients
@@ -104,9 +105,9 @@ public class Main {
     		client.sendMessage("Still-Using-Connection");
     	}
     	
-    	//Wait 4 Seconds
+    	//Wait 3 Seconds
     	try {
-			Thread.sleep(4000);
+			Thread.sleep(3000);
 		}catch (InterruptedException e) {}
     	
     	//Check All Clients

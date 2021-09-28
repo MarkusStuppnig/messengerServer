@@ -45,7 +45,7 @@ public class Distributor implements Runnable {
                         
                         //Check if User is online
                         if(!Main.isUserOnline(username)) {
-                            int port = Main.useFreePort();
+                            int port = Main.getFreePort();
                             
                             if(port != -1) {
                             	
