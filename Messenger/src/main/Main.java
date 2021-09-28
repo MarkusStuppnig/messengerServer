@@ -1,17 +1,28 @@
 package main;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import client.Client;
 import distributor.Distributor;
 
+//----------Errors-----------
 //Error-404: Username not found
 //Error-405: User already online
 //Error-406: No Client response
 
+//----------Commands---------
+//exit: 	Shutdown Server
+//send:		Check connected Clients
+//clients:	List all connected Clients
+//version:  Prints Version
+
 public class Main {
 
+	//Version
+	public static double version = 0.35;
+	
     //Listener Port for Login(Standard: 4200)
     public static final int loginPort = 4200;
     
@@ -88,26 +99,33 @@ public class Main {
     //Fehler: Muss noch rausgefunden werden!!!
     public static void releaseOldConnections() {
     	
-    	ArrayList<Client> clientsToRemove = new ArrayList<>();
-    	
+    	//Send All Clients
     	for(Client client : clients) {
-    		
     		client.sendMessage("Still-Using-Connection");
-    		
-    		try {
-				Thread.sleep(4000);
-			} catch (InterruptedException e) {}
-    		
-    		if(!client.hasAnswered) {
+    	}
+    	
+    	//Wait 4 Seconds
+    	try {
+			Thread.sleep(4000);
+		}catch (InterruptedException e) {}
+    	
+    	//Check All Clients
+    	ArrayList<Client> clientsToRemove = new ArrayList<>();
+    	for(Client client : clients) {
+    		if(client.hasAnswered) {
+    			System.out.println(client.username + ": has answered");
+    			client.hasAnswered = false; //texotek erklärung
+    		}else {
     			System.out.println(client.username + ": hasn't answered");
     			clientsToRemove.add(client);
-    		}else {
-    			System.out.println(client.username + ": answered Still Using and is still connected.");
     		}
     	}
     	
-    	for(int i = 0; i < clientsToRemove.size(); i++) {
-    		clientsToRemove.get(0).removeClient();
+    	//Remove All Clients in List: clientsToRemove
+    	Iterator<Client> iterator = clientsToRemove.iterator();
+    	while(iterator.hasNext()) {
+    		Client client = iterator.next();
+    		client.removeClient();
     	}
     }
 }

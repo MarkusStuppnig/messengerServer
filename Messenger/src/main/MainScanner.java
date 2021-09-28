@@ -26,6 +26,18 @@ public class MainScanner implements Runnable {
 				
 				System.exit(0);
 			}
+			
+			if(message.equals("clients")) {
+				System.out.println("\n----Clients----");
+				for(Client client : Main.clients) {
+					System.out.println(client.username);
+				}
+				System.out.println("\n----Clients----");
+			}
+			
+			if(message.equals("version")) {
+				System.out.println("Version: v" + Main.version);
+			}
 		}
 	}
 }

@@ -81,13 +81,13 @@ public class Client implements Runnable {
         //Listening Clients Messages
         while(true) {
             final String message = this.getMessage();
-            
             if(message != null) {
             	
             	if(message.equals("Still-Using")) {
         			this.hasAnswered = true;
         		}
             	if(message.equals("force-exit")) {
+            		System.out.println("Force-Exit from Client: " + this.username + ".");
             		Main.shutdown();
             	}
             
@@ -146,7 +146,7 @@ public class Client implements Runnable {
         try {
         	//Sending Infos
         	System.out.println(this.username + ": Removed from System");
-        	this.sendMessage("You got removed from the System.");
+        	this.sendMessage("You got removed from the System. (No Response)");
         	
         	//Closing Thread and Streams
         	this.thread.interrupt();
