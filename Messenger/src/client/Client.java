@@ -8,6 +8,10 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Iterator;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import main.Main;
 import wyoni.object.YObject;
@@ -77,6 +81,35 @@ public class Client implements Runnable {
                 removeClient();
             }
             
+            //Connect to other Client
+            final String message = this.getMessage();
+            if(message.startsWith("Connect-To-Client-With-Username:")) {
+				String user = message.substring("Connect-To-Client-With-Username:".length());
+				this.clientsToWrite.add(user);
+				
+		    	this.sendMessage("Your-Now-Connected-To:" + user);
+			}
+            	
+            //Get all messages
+            this.sendMessage("Followed-Messages-Got-While_Offline");
+            
+            YObject file = new YObject("/root/ohta/messages/" + this.username + ".json", false);
+            JSONObject jsonObject = file.getObject();
+            
+            Iterator<String> keys = jsonObject.keys();
+            while(keys.hasNext()) {
+            	String key = keys.next();
+            	if(jsonObject.get(key) instanceof JSONArray) {
+            		JSONArray array = jsonObject.getJSONArray(key);
+            		for(int i = 0; i < array.length(); i++) {
+            			System.out.println(key + ":" + array.get(i));
+            			this.sendMessage(key + ":" + array.get(i));
+            		}
+            	}
+            }
+            
+            file.getYFile().delete();
+            
         }catch(IOException e) {
             removeClient();
         }
@@ -95,14 +128,6 @@ public class Client implements Runnable {
             		System.out.println("Force-Exit from Client: " + this.username + ".");
             		Main.shutdown();
             	}
-            
-				if(message.startsWith("Connect-To-Client-With-Username:")) {
-					String user = message.substring("Connect-To-Client-With-Username:".length());
-					this.clientsToWrite.add(user);
-					
-			    	this.sendMessage("Your-Now-Connected-To:" + user);
-				}
-				
 				
 				if(message.startsWith("Message:")) {
 					final String messageToClient = message.substring("Message:".length());
@@ -114,17 +139,17 @@ public class Client implements Runnable {
 							c.sendMessage("Message-From-Client:" + this.username + ":" + messageToClient);
 							
 						}else {
-							YObject file = new YObject("/root/ohta/messages/" + this.clientsToWrite.get(i) + ".json", true);
+							YObject file = new YObject("/root/ohta/messages/" + this.clientsToWrite.get(i) + ".json", false);
 							
 							ArrayList<String> arr;
-							if(file.getArray("messages." + this.username) != null) {
-								arr = file.getArray("messages." + this.username);
+							if(file.getArray(this.username) != null) {
+								arr = file.getArray(this.username);
 							}else {
 								arr = new ArrayList<String>();
 							}
 							
 							arr.add(messageToClient);
-							file.putArray("messages." + this.username, arr);
+							file.putArray(this.username, arr);
 						}
 					}
 				}
