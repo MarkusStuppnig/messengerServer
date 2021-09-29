@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 import main.Main;
 
@@ -14,6 +15,7 @@ public class Client implements Runnable {
 
     //Die Verbindung zum Client
     public Socket socket;
+    public ServerSocket serverSocket;
     
     //Der Thread des Clients
     public Thread thread;   
@@ -28,9 +30,9 @@ public class Client implements Runnable {
     //Basic Infos werden abgespeichert
     public String username;
     public int port;
-     
-    public boolean connectedToOtherClient;
-    public Client clientToWrite;
+    
+    //ArrayLists to write
+    public ArrayList<Client> clientsToWrite;
     
     public boolean hasAnswered;
     
@@ -39,7 +41,8 @@ public class Client implements Runnable {
         this.username = username;
         this.port = port;
         
-        this.connectedToOtherClient = false;
+        this.clientsToWrite = new ArrayList<Client>();
+        
         this.hasAnswered = false;
         
         Main.clients.add(this);
@@ -49,8 +52,7 @@ public class Client implements Runnable {
     public void run() {
         
         try {
-            @SuppressWarnings("resource")
-            ServerSocket serverSocket = new ServerSocket(this.port);
+            this.serverSocket = new ServerSocket(this.port);
             this.socket = serverSocket.accept();
             
             this.iStream = this.socket.getInputStream();
@@ -81,6 +83,8 @@ public class Client implements Runnable {
         //Listening Clients Messages
         while(true) {
             final String message = this.getMessage();
+			System.out.println(this.username + ": wrote \"" + message + "\"");
+
             if(message != null) {
             	
             	if(message.equals("Still-Using")) {
@@ -91,33 +95,29 @@ public class Client implements Runnable {
             		Main.shutdown();
             	}
             
-				System.out.println(this.username + ": wrote \"" + message + "\"");
-				
 				if(message.startsWith("Connect-To-Client-With-Username:")) {
 					String user = message.substring("Connect-To-Client-With-Username:".length());
 					
-					if(Main.isUserOnline(user)) {
-						Client client = Main.getClientByName(user);
-						
-						this.clientToWrite = client;
-						this.connectedToOtherClient = true;
-						
-				    	client.clientToWrite = this;
-				    	client.connectedToOtherClient = true;
-				    	
-				    	this.sendMessage("Your-Now-Connected-To:" + user);
-				    	client.sendMessage("Your-Now-Connected-To:" + this.username);
-				    	
-					}else {
-						this.sendMessage("Error-406: No Client response");
-					}
+					Client client = Main.getClientByName(user);
+					
+					this.clientsToWrite.add(client);
+			    	this.sendMessage("Your-Now-Connected-To:" + client.username);
 				}
 				
 				
 				if(message.startsWith("Message:")) {
 					final String messageToClient = message.substring("Message:".length());
 					
-					this.clientToWrite.sendMessage("Message-From-Client:" + this.username + ":" + messageToClient);
+					for(int i = 0; i < this.clientsToWrite.size(); i++) {
+						if(Main.isUserOnline(this.clientsToWrite.get(i).username)) {
+							Client c = Main.getClientByName(this.clientsToWrite.get(i).username);
+							
+							c.sendMessage("Message-From-Client:" + this.username + ":" + messageToClient);
+							
+						}else {
+							
+						}
+					}
 				}
             }
         }
@@ -147,14 +147,17 @@ public class Client implements Runnable {
         	//Sending Infos
         	System.out.println(this.username + ": Removed from System");
         	this.sendMessage("You got removed from the System. (No Response)");
-        	
-        	//Closing Thread and Streams
-        	this.thread.interrupt();
-        	this.bufferedReader.close();
-            this.socket.close();
             
             //Removing From Main Array
             Main.clients.remove(this);
+            if(Main.clients.contains(this)) System.out.println(this.username + " fail");
+
+            
+            //Closing Thread and Streams
+        	this.thread.interrupt();
+        	this.bufferedReader.close();
+            this.socket.close();
+            this.serverSocket.close();
             
         }catch (IOException e) {}
     }
