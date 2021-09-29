@@ -20,11 +20,7 @@ public class MainScanner implements Runnable {
 			
 			if(message.equals("exit")) {
 				scan.close();
-				for(Client client : Main.clients) {
-					client.removeClient();
-				}
-				
-				System.exit(0);
+				Main.shutdown();
 			}
 			
 			if(message.equals("clients")) {

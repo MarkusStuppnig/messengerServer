@@ -36,17 +36,12 @@ public class Client implements Runnable {
     public String username;
     public int port;
     
-    //ArrayLists to write
-    public ArrayList<String> clientsToWrite;
-    
     public boolean hasAnswered;
     
     //Wenn der neue Listener erstellt wird, wird ihm gesagt, auf welchen Port er hören soll
     public Client(String username, int port) {
         this.username = username;
         this.port = port;
-        
-        this.clientsToWrite = new ArrayList<String>();
         
         this.hasAnswered = false;
         
@@ -80,15 +75,6 @@ public class Client implements Runnable {
             }else {
                 removeClient();
             }
-            
-            //Connect to other Client
-            final String message = this.getMessage();
-            if(message.startsWith("Connect-To-Client-With-Username:")) {
-				String user = message.substring("Connect-To-Client-With-Username:".length());
-				this.clientsToWrite.add(user);
-				
-		    	this.sendMessage("Your-Now-Connected-To:" + user);
-			}
             	
             //Get all messages
             this.sendMessage("Followed-Messages-Got-While_Offline");
@@ -117,29 +103,34 @@ public class Client implements Runnable {
         //Listening Clients Messages
         while(true) {
             final String message = this.getMessage();
-			System.out.println(this.username + ": wrote \"" + message + "\"");
 
             if(message != null) {
             	
             	if(message.equals("Still-Using")) {
         			this.hasAnswered = true;
         		}
+            	if(message.equals("Disconnect")) {
+            		this.removeClient();
+            	}
             	if(message.equals("force-exit")) {
             		System.out.println("Force-Exit from Client: " + this.username + ".");
             		Main.shutdown();
             	}
 				
+            	//Messages to other Clients
 				if(message.startsWith("Message:")) {
-					final String messageToClient = message.substring("Message:".length());
+					final String messageToClient = message.substring(message.lastIndexOf(":"));
+					final String users = message.substring("Message:".length(), message.lastIndexOf(":"));
+					final String[] usersToWrite = users.split(";");
 					
-					for(int i = 0; i < this.clientsToWrite.size(); i++) {
-						if(Main.isUserOnline(this.clientsToWrite.get(i))) {
-							Client c = Main.getClientByName(this.clientsToWrite.get(i));
+					for(String user : usersToWrite) {
+						if(Main.isUserOnline(user)) {
+							Client c = Main.getClientByName(user);
 							
 							c.sendMessage("Message-From-Client:" + this.username + ":" + messageToClient);
 							
 						}else {
-							YObject file = new YObject("/root/ohta/messages/" + this.clientsToWrite.get(i) + ".json", false);
+							YObject file = new YObject("/root/ohta/messages/" + user + ".json", false);
 							
 							ArrayList<String> arr;
 							if(file.getArray(this.username) != null) {
