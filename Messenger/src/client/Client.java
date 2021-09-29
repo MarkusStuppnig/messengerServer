@@ -64,7 +64,7 @@ public class Client implements Runnable {
             final String login_message = this.getMessage();
             
             if(login_message.startsWith("Login-In-With-Username:")) {
-                if(login_message.substring("Login-In-With-Username:".length()).equals(this.username)) {
+                if(login_message.toLowerCase().substring("Login-In-With-Username:".length()).equals(this.username)) {
                     this.sendMessage("Successfully-Logged-In");
                     System.out.println(this.username + ": Logged in");
                     
@@ -77,7 +77,7 @@ public class Client implements Runnable {
             }
             	
             //Get all messages
-            this.sendMessage("Followed-Messages-Got-While_Offline");
+            this.sendMessage("+Followed-Messages-Got-While_Offline");
             
             YObject file = new YObject("/root/ohta/messages/" + this.username + ".json", false);
             JSONObject jsonObject = file.getObject();
@@ -93,6 +93,7 @@ public class Client implements Runnable {
             		}
             	}
             }
+            this.sendMessage("-Followed-Messages-Got-While_Offline");
             
             file.getYFile().delete();
             
@@ -119,8 +120,8 @@ public class Client implements Runnable {
 				
             	//Messages to other Clients
 				if(message.startsWith("Message:")) {
-					final String messageToClient = message.substring(message.lastIndexOf(":"));
-					final String users = message.substring("Message:".length(), message.lastIndexOf(":"));
+					final String messageToClient = message.substring(message.lastIndexOf(":") + 1);
+					final String users = message.substring("Message:".length(), message.lastIndexOf(":")).toLowerCase();
 					final String[] usersToWrite = users.split(";");
 					
 					for(String user : usersToWrite) {

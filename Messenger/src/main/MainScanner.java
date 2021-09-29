@@ -14,24 +14,24 @@ public class MainScanner implements Runnable {
 		while(true) {
 			message = scan.nextLine();
 			
-			if(message.equals("send")) {
+			if(message.equalsIgnoreCase("send")) {
 				Main.releaseOldConnections();
 			}
 			
-			if(message.equals("exit")) {
+			if(message.equalsIgnoreCase("exit")) {
 				scan.close();
 				Main.shutdown();
 			}
 			
-			if(message.equals("clients")) {
+			if(message.equalsIgnoreCase("clients")) {
 				System.out.println("\n----Clients----");
 				for(Client client : Main.clients) {
 					System.out.println(client.username);
 				}
-				System.out.println("\n----Clients----");
+				System.out.println("----Clients----");
 			}
 			
-			if(message.equals("version")) {
+			if(message.equalsIgnoreCase("version")) {
 				System.out.println("Version: v" + Main.version);
 			}
 		}

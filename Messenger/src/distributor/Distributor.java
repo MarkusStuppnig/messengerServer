@@ -41,7 +41,7 @@ public class Distributor implements Runnable {
                     //Check if Login is right
                     if(login_message.startsWith("Connect-To-Network-With-Username:")) {
                         
-                        String username = login_message.substring("Connect-To-Network-With-Username:".length());
+                        final String username = login_message.substring("Connect-To-Network-With-Username:".length()).toLowerCase();
                         
                         //Check if User is online
                         if(!Main.isUserOnline(username)) {
