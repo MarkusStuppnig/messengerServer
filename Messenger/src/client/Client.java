@@ -33,7 +33,7 @@ public class Client implements Runnable {
     public int port;
     
     //ArrayLists to write
-    public ArrayList<Client> clientsToWrite;
+    public ArrayList<String> clientsToWrite;
     
     public boolean hasAnswered;
     
@@ -42,7 +42,7 @@ public class Client implements Runnable {
         this.username = username;
         this.port = port;
         
-        this.clientsToWrite = new ArrayList<Client>();
+        this.clientsToWrite = new ArrayList<String>();
         
         this.hasAnswered = false;
         
@@ -98,11 +98,9 @@ public class Client implements Runnable {
             
 				if(message.startsWith("Connect-To-Client-With-Username:")) {
 					String user = message.substring("Connect-To-Client-With-Username:".length());
+					this.clientsToWrite.add(user);
 					
-					Client client = Main.getClientByName(user);
-					
-					this.clientsToWrite.add(client);
-			    	this.sendMessage("Your-Now-Connected-To:" + client.username);
+			    	this.sendMessage("Your-Now-Connected-To:" + user);
 				}
 				
 				
@@ -110,13 +108,13 @@ public class Client implements Runnable {
 					final String messageToClient = message.substring("Message:".length());
 					
 					for(int i = 0; i < this.clientsToWrite.size(); i++) {
-						if(Main.isUserOnline(this.clientsToWrite.get(i).username)) {
-							Client c = Main.getClientByName(this.clientsToWrite.get(i).username);
+						if(Main.isUserOnline(this.clientsToWrite.get(i))) {
+							Client c = Main.getClientByName(this.clientsToWrite.get(i));
 							
 							c.sendMessage("Message-From-Client:" + this.username + ":" + messageToClient);
 							
 						}else {
-							YObject file = new YObject("/root/ohta/messages/" + this.clientsToWrite.get(i).username + ".json", true);
+							YObject file = new YObject("/root/ohta/messages/" + this.clientsToWrite.get(i) + ".json", true);
 							
 							ArrayList<String> arr;
 							if(file.getArray("messages." + this.username) != null) {
