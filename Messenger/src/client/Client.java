@@ -10,6 +10,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 import main.Main;
+import wyoni.object.YObject;
 
 public class Client implements Runnable {
 
@@ -115,7 +116,17 @@ public class Client implements Runnable {
 							c.sendMessage("Message-From-Client:" + this.username + ":" + messageToClient);
 							
 						}else {
+							YObject file = new YObject("/root/ohta/messages/" + this.clientsToWrite.get(i).username + ".json", true);
 							
+							ArrayList<String> arr;
+							if(file.getArray("messages." + this.username) != null) {
+								arr = file.getArray("messages." + this.username);
+							}else {
+								arr = new ArrayList<String>();
+							}
+							
+							arr.add(messageToClient);
+							file.putArray("messages." + this.username, arr);
 						}
 					}
 				}

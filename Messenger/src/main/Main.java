@@ -21,7 +21,7 @@ import distributor.Distributor;
 public class Main {
 
 	//Version
-	public static final double version = 0.37;
+	public static final double version = 0.4;
 	
     //Listener Port for Login(Standard: 4200)
     public static final int loginPort = 4200;
