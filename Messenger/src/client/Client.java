@@ -75,7 +75,7 @@ public class Client implements Runnable {
             }else {
                 removeClient();
             }
-            	
+            
             //Get all messages
             this.sendMessage("+Followed-Messages-Got-While_Offline");
             
