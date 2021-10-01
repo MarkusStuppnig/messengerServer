@@ -38,7 +38,7 @@ public class Client implements Runnable {
     
     public boolean hasAnswered;
     
-    //Wenn der neue Listener erstellt wird, wird ihm gesagt, auf welchen Port er hören soll
+    //Wenn der neue Listener erstellt wird, wird ihm gesagt, auf welchen Port er hoeren soll
     public Client(String username, int port) {
         this.username = username;
         this.port = port;
