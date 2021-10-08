@@ -117,6 +117,13 @@ public class Client implements Runnable {
             		System.out.println("Force-Exit from Client: " + this.username + ".");
             		Main.shutdown();
             	}
+            	if(message.equals("Request-Users-Online")) {
+            		this.sendMessage("+Clients-Online");
+            		for(Client client : Main.clients) {
+            			this.sendMessage(client.username);
+            		}
+            		this.sendMessage("-Clients-Online");
+            	}
 				
             	//Messages to other Clients
 				if(message.startsWith("Message:")) {
