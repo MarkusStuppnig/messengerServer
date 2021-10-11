@@ -31,6 +31,8 @@ public class Main {
     
     //Thread
     public static Thread mainScanner;
+    public static Thread distributor;
+    public static Thread update;
     
     //Main Methode
     public static void main(String[] args) {
@@ -41,9 +43,14 @@ public class Main {
     public static void setup() {
         
         //Starting Listener
-        Thread distributor = new Thread(new Distributor());
+        distributor = new Thread(new Distributor());
         distributor.start();
         
+        //Starting release (all 5 Seconds)
+        update = new Thread(new Update());
+        update.start();
+        
+        //Starting Main Scanner
         mainScanner = new Thread(new MainScanner());
         mainScanner.start();
     }
@@ -55,6 +62,8 @@ public class Main {
     	
     	//Closing Threads
     	mainScanner.interrupt();
+    	distributor.interrupt();
+    	update.interrupt();
     	
     	//Removing Clients from Array
     	for(int i = 0; i < Main.clients.size(); i++) {
