@@ -26,10 +26,10 @@ public class Main {
     //Listener Port for Login(Standard: 4200)
     public static final int loginPort = 4200;
     
-    //Infos to Clients
+    //Info to Clients
     public static ArrayList<Client> clients = new ArrayList<>();
     
-    //Thread
+    //Threads
     public static Thread mainScanner;
     public static Thread distributor;
     public static Thread update;
@@ -124,7 +124,7 @@ public class Main {
     	for(Client client : clients) {
     		if(client.hasAnswered) {
     			System.out.println(client.username + ": has answered");
-    			client.hasAnswered = false; //texotek erklärung
+    			client.hasAnswered = false;
     		}else {
     			System.out.println(client.username + ": hasn't answered");
     			clientsToRemove.add(client);
