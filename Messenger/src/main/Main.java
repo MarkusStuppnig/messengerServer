@@ -123,6 +123,8 @@ public class Main {
     	
     	//Check All Clients
     	for(String c : clientsToSend) {
+    		if(Main.getClientByName(c) == null) continue;
+    		
     		Client client = Main.getClientByName(c);
     		if(client.hasAnswered) {
     			System.out.println(client.username + ": has answered");
