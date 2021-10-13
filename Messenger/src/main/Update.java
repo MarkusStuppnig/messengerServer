@@ -9,6 +9,8 @@ public class Update implements Runnable {
 				Thread.sleep(2000);
 			}catch(InterruptedException e) {}
 			
+			
+			System.out.println("doing");
 			Main.releaseOldConnections();
 		}
 	}

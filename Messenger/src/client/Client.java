@@ -23,7 +23,7 @@ public class Client implements Runnable {
     public ServerSocket serverSocket;
     
     //Der Thread des Clients
-    public Thread thread;   
+    public Thread thread;
     
     //Hiermit wird zum Client eschrieben
     private OutputStream oStream = null;
@@ -66,12 +66,17 @@ public class Client implements Runnable {
                     this.sendMessage("Successfully-Logged-In");
                     System.out.println(this.username + ": Logged in");
                     
+                    //Add
+                    Main.clients.add(this);
+                    
                 }else {
                     this.sendMessage("Error-404: Username not found");
                     removeClient();
+                    System.out.println("Second: " + login_message);
                 }
             }else {
                 removeClient();
+                System.out.println("First: " + login_message);
             }
             
             //Get all messages
@@ -97,9 +102,8 @@ public class Client implements Runnable {
             
         }catch(IOException e) {
             removeClient();
+            e.printStackTrace();
         }
-        
-        Main.clients.add(this);
         
         //Listening Clients Messages
         while(true) {
@@ -112,6 +116,7 @@ public class Client implements Runnable {
         		}
             	if(message.equals("Disconnect")) {
             		this.removeClient();
+            		System.out.println("clients wants to disconnect");
             	}
             	if(message.equals("force-exit")) {
             		System.out.println("Force-Exit from Client: " + this.username + ".");
@@ -177,6 +182,8 @@ public class Client implements Runnable {
     //Method which removes Client completely
     public void removeClient() {
         try {
+        	System.out.println("removing");
+        	
         	//Sending Infos
         	System.out.println(this.username + ": Removed from System");
         	this.sendMessage("You got removed from the System. (No Response)");
@@ -192,6 +199,8 @@ public class Client implements Runnable {
             this.socket.close();
             this.serverSocket.close();
             
-        }catch (IOException e) {}
+        }catch (IOException e) {
+        	e.printStackTrace();
+        }
     }
 }

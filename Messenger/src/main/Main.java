@@ -21,7 +21,7 @@ import distributor.Distributor;
 public class Main {
 
 	//Version
-	public static final double version = 0.45;
+	public static final double version = 0.5;
 	
     //Listener Port for Login(Standard: 4200)
     public static final int loginPort = 4200;
@@ -109,8 +109,11 @@ public class Main {
     
     public static void releaseOldConnections() {
     	
+    	ArrayList<Client> clientsToSend = clients;
+    	System.out.println(clientsToSend);
+    	
     	//Send All Clients
-    	for(Client client : clients) {
+    	for(Client client : clientsToSend) {
     		client.sendMessage("Still-Using-Connection");
     	}
     	
@@ -121,7 +124,7 @@ public class Main {
     	
     	//Check All Clients
     	ArrayList<Client> clientsToRemove = new ArrayList<>();
-    	for(Client client : clients) {
+    	for(Client client : clientsToSend) {
     		if(client.hasAnswered) {
     			System.out.println(client.username + ": has answered");
     			client.hasAnswered = false;
@@ -136,6 +139,7 @@ public class Main {
     	while(iterator.hasNext()) {
     		Client client = iterator.next();
     		client.removeClient();
+    		System.out.println("Removing here");
     	}
     }
 }
