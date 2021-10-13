@@ -127,10 +127,8 @@ public class Main {
     		
     		Client client = Main.getClientByName(c);
     		if(client.hasAnswered) {
-    			System.out.println(client.username + ": has answered");
     			client.hasAnswered = false;
     		}else {
-    			System.out.println(client.username + ": hasn't answered");
     			client.removeClient();
     		}
     	}
