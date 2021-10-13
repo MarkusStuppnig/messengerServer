@@ -72,11 +72,9 @@ public class Client implements Runnable {
                 }else {
                     this.sendMessage("Error-404: Username not found");
                     removeClient();
-                    System.out.println("Second: " + login_message);
                 }
             }else {
                 removeClient();
-                System.out.println("First: " + login_message);
             }
             
             //Get all messages
@@ -102,7 +100,6 @@ public class Client implements Runnable {
             
         }catch(IOException e) {
             removeClient();
-            e.printStackTrace();
         }
         
         //Listening Clients Messages
@@ -116,7 +113,6 @@ public class Client implements Runnable {
         		}
             	if(message.equals("Disconnect")) {
             		this.removeClient();
-            		System.out.println("clients wants to disconnect");
             	}
             	if(message.equals("force-exit")) {
             		System.out.println("Force-Exit from Client: " + this.username + ".");
@@ -182,8 +178,6 @@ public class Client implements Runnable {
     //Method which removes Client completely
     public void removeClient() {
         try {
-        	System.out.println("removing");
-        	
         	//Sending Infos
         	System.out.println(this.username + ": Removed from System");
         	this.sendMessage("You got removed from the System. (No Response)");

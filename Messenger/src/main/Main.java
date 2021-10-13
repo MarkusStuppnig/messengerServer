@@ -1,7 +1,6 @@
 package main;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import client.Client;
@@ -109,11 +108,11 @@ public class Main {
     
     public static void releaseOldConnections() {
     	
-    	ArrayList<Client> clientsToSend = clients;
-    	System.out.println(clientsToSend);
-    	
-    	//Send All Clients
-    	for(Client client : clientsToSend) {
+    	//Register Clients and send
+    	ArrayList<String> clientsToSend = new ArrayList<String>();
+    	for(Client client : clients) {
+    		clientsToSend.add(client.username);
+    		
     		client.sendMessage("Still-Using-Connection");
     	}
     	
@@ -123,23 +122,15 @@ public class Main {
 		}catch (InterruptedException e) {}
     	
     	//Check All Clients
-    	ArrayList<Client> clientsToRemove = new ArrayList<>();
-    	for(Client client : clientsToSend) {
+    	for(String c : clientsToSend) {
+    		Client client = Main.getClientByName(c);
     		if(client.hasAnswered) {
     			System.out.println(client.username + ": has answered");
     			client.hasAnswered = false;
     		}else {
     			System.out.println(client.username + ": hasn't answered");
-    			clientsToRemove.add(client);
+    			client.removeClient();
     		}
-    	}
-    	
-    	//Remove All Clients in List: clientsToRemove
-    	Iterator<Client> iterator = clientsToRemove.iterator();
-    	while(iterator.hasNext()) {
-    		Client client = iterator.next();
-    		client.removeClient();
-    		System.out.println("Removing here");
     	}
     }
 }
