@@ -44,8 +44,6 @@ public class Client implements Runnable {
         this.port = port;
         
         this.hasAnswered = false;
-        
-        Main.clients.add(this);
     }
     
     @Override
@@ -100,6 +98,8 @@ public class Client implements Runnable {
         }catch(IOException e) {
             removeClient();
         }
+        
+        Main.clients.add(this);
         
         //Listening Clients Messages
         while(true) {
